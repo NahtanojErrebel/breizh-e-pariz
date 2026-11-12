@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Breizh e Pariz : les crêperies et bars à ambiance bretonne de Paris, dans une application.">
+<title>Breizh e Pariz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout : grand titre + téléphone posé sur un drapeau gwenn-ha-du, puis bandes pleine largeur alternées granit / ciré jaune */
+:root{
+  --bg:#F3F5F2;          /* granit clair */
+  --surface:#FFFFFF;
+  --fg:#141A22;          /* encre */
+  --muted:#4E5966;       /* ardoise */
+  --line:#D8DDD7;
+  --mer:#1D4F73;         /* bleu marine */
+  --cire:#F2B705;        /* jaune ciré de marin */
+  --on-cire:#141A22;
+  --flag-black:#121212;
+  --flag-white:#FAFAF7;
+  --f-display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --wrap:1180px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F141B; --surface:#18202A; --fg:#ECEFEA; --muted:#9DA8B4; --line:#2A3440;
+    --mer:#7DB3DD; --cire:#F2B705; --on-cire:#141A22; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F141B; --surface:#18202A; --fg:#ECEFEA; --muted:#9DA8B4; --line:#2A3440;
+  --mer:#7DB3DD; --cire:#F2B705; --on-cire:#141A22; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--cire);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.05}
+p{margin:0}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-left:max(24px, env(safe-area-inset-left,0px));padding-right:max(24px, env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mer)}
+
+/* Nav */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:16px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px;text-decoration:none}
+.logo svg{width:26px;height:26px;color:var(--fg)}
+.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-weight:500;font-size:15px}
+.nav ul a{text-decoration:none;color:var(--muted)}
+.nav ul a:hover{color:var(--fg)}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-body);font-weight:600;font-size:15px;padding:12px 20px;border-radius:999px;text-decoration:none;border:2px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer}
+.btn-cire{background:var(--cire);border-color:var(--cire);color:var(--on-cire)}
+.btn:hover{transform:translateY(-1px)}
+
+/* Hero */
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding-block:72px 88px}
+.hero h1{font-size:clamp(44px,6.4vw,84px);font-weight:800;letter-spacing:-.02em;margin-top:18px}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%, var(--cire) 62%, var(--cire) 92%, transparent 92%);padding-inline:4px}
+.hero .lead{font-size:20px;color:var(--muted);max-width:34em;margin-top:24px}
+.stores{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.store{display:flex;align-items:center;gap:12px;background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 20px 10px 16px;text-decoration:none;min-width:190px}
+.store svg{width:26px;height:26px;flex:none}
+.store small{display:block;font-size:11px;opacity:.75;line-height:1.2}
+.store b{display:block;font-family:var(--f-display);font-size:19px;line-height:1.15}
+.hero-note{margin-top:20px;font-size:14px;color:var(--muted)}
+
+/* Drapeau + téléphone */
+.flag{position:relative;aspect-ratio:3/4;max-width:100%;border-radius:6px;overflow:hidden;
+  background:repeating-linear-gradient(to bottom,var(--flag-black) 0 11.11%,var(--flag-white) 11.11% 22.22%)}
+.flag .canton{position:absolute;inset:0 auto auto 0;width:46%;height:44.44%;background:var(--flag-white);display:grid;grid-template-columns:repeat(3,1fr);place-items:center;padding:10px}
+.flag .canton svg{width:30px;height:38px;color:var(--flag-black)}
+.phone{position:absolute;left:50%;top:50%;transform:translate(-38%,-46%) rotate(3deg);width:290px;max-width:78%;background:#0B0E12;border-radius:40px;padding:12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.55)}
+.screen{background:#F6F7F4;color:#141A22;border-radius:30px;overflow:hidden;font-family:var(--f-body);font-size:12px;line-height:1.35}
+.screen .top{padding:18px 16px 10px}
+.screen .top b{font-family:var(--f-display);font-size:20px;display:block}
+.screen .search{margin-top:10px;background:#fff;border:1px solid #DDE1DC;border-radius:10px;padding:8px 10px;color:#6B7580}
+.chips{display:flex;gap:6px;padding:0 16px 10px;overflow:hidden}
+.chip{flex:none;border:1px solid #CBD1CA;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:600}
+.chip.on{background:#141A22;color:#fff;border-color:#141A22}
+.card{margin:0 12px 8px;background:#fff;border-radius:14px;padding:10px 12px;border:1px solid #E3E6E1}
+.card.sponso{border:2px solid #F2B705}
+.card .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card b{font-family:var(--f-display);font-size:14px}
+.card .dist{font-family:var(--f-mono);font-size:10px;color:#6B7580}
+.card .meta{color:#4E5966;margin-top:2px}
+.card .tag{display:inline-block;margin-top:6px;background:#F2B705;color:#141A22;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px}
+.tabbar{display:flex;justify-content:space-around;border-top:1px solid #E3E6E1;padding:10px 0 14px;font-size:10px;color:#6B7580;font-weight:600}
+.tabbar span:first-child{color:#141A22}
+
+/* Sections */
+section{scroll-margin-top:80px}
+.band{padding-block:96px}
+.band-head{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;margin-bottom:56px}
+.band-head h2{font-size:clamp(34px,4vw,52px);font-weight:800;letter-spacing:-.015em;margin-top:12px}
+.band-head p{color:var(--muted);font-size:18px;max-width:32em}
+
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.feature{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px 24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.feature svg{width:34px;height:34px;color:var(--mer)}
+.feature h3{font-size:21px;font-weight:700}
+.feature p{color:var(--muted);font-size:15.5px}
+
+.filters{margin-top:56px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.filters .label{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin-right:6px;text-transform:uppercase;letter-spacing:.06em}
+.pill{border:1.5px solid var(--fg);border-radius:999px;padding:7px 16px;font-weight:600;font-size:15px}
+
+/* Classement */
+.top10{border-top:1px solid var(--line)}
+.rank-list{list-style:none;margin:0;padding:0;border-top:2px solid var(--fg)}
+.rank{display:grid;grid-template-columns:72px minmax(0,1fr) 150px 150px 190px;gap:24px;align-items:center;padding-block:20px;border-bottom:1px solid var(--line)}
+.rank-head{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding-block:14px}
+.rank .n{font-family:var(--f-display);font-weight:800;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;color:var(--mer)}
+.rank:nth-child(-n+4) .n{color:var(--fg)}
+.rank h3{font-size:22px;font-weight:700}
+.rank .where{color:var(--muted);font-size:15px;margin-top:2px}
+.rank .src{font-variant-numeric:tabular-nums}
+.rank .src b{font-family:var(--f-display);font-size:22px}
+.rank .src small{display:block;color:var(--muted);font-size:13px}
+.rank .src .k{display:none;font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.score{display:flex;align-items:center;gap:12px}
+.score b{font-family:var(--f-display);font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--cire)}
+.method{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:32px;color:var(--muted);font-size:15px}
+.method strong{color:var(--fg)}
+
+/* Quartier */
+.quartier{background:var(--mer);color:#F3F5F2}
+.quartier .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.quartier .eyebrow{color:var(--cire)}
+.quartier h2{font-size:clamp(34px,4vw,52px);font-weight:800;margin-top:12px}
+.quartier p{margin-top:20px;font-size:18px;opacity:.9;max-width:32em}
+.lex{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.25);border-radius:16px;overflow:hidden}
+.lex div{background:var(--mer);padding:22px 22px 20px}
+.lex b{font-family:var(--f-display);font-size:24px;display:block}
+.lex span{font-family:var(--f-mono);font-size:12px;opacity:.75;display:block;margin-top:2px}
+.lex p{margin-top:8px;font-size:15px}
+
+/* Pros */
+.pros{background:var(--cire);color:var(--on-cire)}
+.pros .eyebrow{color:var(--on-cire)}
+.pros .band-head p{color:var(--on-cire);opacity:.82}
+.offers{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.offer{background:#FFFDF5;color:#141A22;border-radius:18px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.offer.star{background:#141A22;color:#F3F5F2}
+.offer h3{font-size:22px;font-weight:700}
+.offer .price{font-family:var(--f-display);font-weight:800;font-size:38px;line-height:1;font-variant-numeric:tabular-nums}
+.offer .price small{font-family:var(--f-body);font-size:14px;font-weight:500;opacity:.7}
+.offer ul{margin:0;padding-left:18px;font-size:15px;display:flex;flex-direction:column;gap:6px}
+.offer .badge{align-self:flex-start;font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;background:#F2B705;color:#141A22;padding:4px 8px;border-radius:4px}
+.pros-foot{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;margin-top:64px;align-items:start}
+.pros-foot h3{font-size:30px;font-weight:800}
+.pros-foot p{margin-top:12px;opacity:.85}
+.pros-foot .legal{margin-top:20px;font-size:14px;opacity:.75}
+form{background:#FFFDF5;color:#141A22;border-radius:20px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+form label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600}
+form .full{grid-column:1/-1}
+input,select,textarea{font:inherit;font-weight:400;font-size:15px;padding:11px 12px;border:1.5px solid #C9CEC6;border-radius:10px;background:#fff;color:#141A22;width:100%}
+textarea{min-height:90px;resize:vertical}
+form .btn{border-color:#141A22;background:#141A22;color:#FFFDF5;justify-self:start}
+#form-msg{grid-column:1/-1;font-size:14px;color:#1D4F73;font-weight:600}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:repeat(2,1fr);gap:16px 48px}
+details{border-top:1.5px solid var(--fg);padding-block:18px}
+summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:20px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";font-family:var(--f-mono)}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:10px;font-size:16px}
+
+/* Footer */
+footer{border-top:1px solid var(--line)}
+footer .gwenn{height:10px;background:repeating-linear-gradient(to right,var(--flag-black) 0 40px,var(--flag-white) 40px 80px)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;padding-block:40px;font-size:14px;color:var(--muted)}
+footer nav{display:flex;flex-wrap:wrap;gap:22px}
+footer .kenavo{font-family:var(--f-display);font-weight:700;color:var(--fg);font-size:18px}
+
+/* Responsive */
+@media (max-width:980px){
+  .hero .wrap,.band-head,.quartier .wrap,.pros-foot{grid-template-columns:1fr}
+  .features,.offers{grid-template-columns:repeat(2,1fr)}
+  .rank{grid-template-columns:56px minmax(0,1fr) 1fr 1fr;row-gap:12px}
+  .rank .score{grid-column:2/-1}
+  .rank-head{display:none}
+  .rank .src .k{display:block}
+  .method{grid-template-columns:1fr}
+  .flag{max-width:440px}
+  .nav ul{display:none}
+}
+@media (max-width:600px){
+  .features,.offers,.faq,form,.lex{grid-template-columns:1fr}
+  .rank{grid-template-columns:44px 1fr 1fr}
+  .rank .n{font-size:32px}
+  .rank > div:nth-child(2){grid-column:2/-1}
+  .rank > div:nth-child(3){grid-column:2}
+  .rank .score{grid-column:2/-1}
+  .band{padding-block:64px}
+  .hero .wrap{padding-block:40px 56px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.btn:hover{transform:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ermine" viewBox="0 0 30 40">
+    <circle cx="15" cy="4" r="3.2" fill="currentColor"/>
+    <circle cx="8" cy="9" r="3.2" fill="currentColor"/>
+    <circle cx="22" cy="9" r="3.2" fill="currentColor"/>
+    <path d="M15 12 C11 20 7 28 4 38 L10 34 L15 39 L20 34 L26 38 C23 28 19 20 15 12Z" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><svg aria-hidden="true"><use href="#ermine"/></svg>Breizh e Pariz</a>
+    <ul>
+      <li><a href="#appli">L'application</a></li>
+      <li><a href="#top-10">Top 10</a></li>
+      <li><a href="#montparnasse">Montparnasse</a></li>
+      <li><a href="#pros">Établissements</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ul>
+    <a class="btn btn-cire" href="#telecharger">Télécharger l'appli</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="telecharger">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Crêperies · bars · fest-noz · Paris</span>
+        <h1>Paris a un goût de <em>beurre salé</em>.</h1>
+        <p class="lead">Breizh e Pariz rassemble les crêperies, bars et restaurants à l'ambiance bretonne de Paris. Trouvez une galette complète près de chez vous, un cidre à la pression pour le match ou le prochain fest-noz du quartier.</p>
+        <div class="stores">
+          <a class="store" href="#" aria-label="Télécharger dans l'App Store (lien à venir)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.5 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.3 1.2 9.7.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-3.9zM14.1 5.4c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg>
+            <span><small>Télécharger dans</small><b>l'App Store</b></span>
+          </a>
+          <a class="store" href="#" aria-label="Disponible sur Google Play (lien à venir)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2.5v19l10-9.5L4 2.5zm11.3 8.3L6.6 2.1l10.9 6.3-2.2 2.4zm0 2.4 2.2 2.4-10.9 6.3 8.7-8.7zm3.4-3.9 2.6 1.5c.9.5.9 1.8 0 2.3l-2.6 1.5-2.5-2.6 2.5-2.7z"/></svg>
+            <span><small>Disponible sur</small><b>Google Play</b></span>
+          </a>
+        </div>
+        <p class="hero-note">Gratuit, sans inscription obligatoire.</p>
+      </div>
+
+      <div class="flag" aria-hidden="true">
+        <div class="canton">
+          <svg><use href="#ermine"/></svg><svg><use href="#ermine"/></svg><svg><use href="#ermine"/></svg>
+          <svg><use href="#ermine"/></svg><svg><use href="#ermine"/></svg><svg><use href="#ermine"/></svg>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="top">
+              <b>Autour de moi</b>
+              <div class="search">Rechercher une crêperie, un bar…</div>
+            </div>
+            <div class="chips">
+              <span class="chip on">Crêperies</span><span class="chip">Bars</span><span class="chip">Fest-noz</span><span class="chip">Cidre</span>
+            </div>
+            <div class="card sponso">
+              <div class="row"><b>Crêperie Ker Avel</b><span class="dist">350 m</span></div>
+              <div class="meta">Paris 14e · Galettes au blé noir</div>
+              <span class="tag">Sponsorisé</span>
+            </div>
+            <div class="card">
+              <div class="row"><b>Tavarn an Aod</b><span class="dist">600 m</span></div>
+              <div class="meta">Paris 15e · Bar · Cidre pression</div>
+            </div>
+            <div class="card">
+              <div class="row"><b>Ti Krampouezh</b><span class="dist">1,1 km</span></div>
+              <div class="meta">Paris 6e · Crêperie · Terrasse</div>
+            </div>
+            <div class="card">
+              <div class="row"><b>Le Penn Sardin</b><span class="dist">1,4 km</span></div>
+              <div class="meta">Paris 14e · Fest-noz jeudi 20 h</div>
+            </div>
+            <div class="tabbar"><span>Carte</span><span>Agenda</span><span>Favoris</span><span>Profil</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="appli">
+    <div class="wrap">
+      <div class="band-head">
+        <div>
+          <span class="eyebrow">L'application</span>
+          <h2>Toute la Bretagne de Paris, dans votre poche.</h2>
+        </div>
+        <p>Chaque adresse est choisie pour son ambiance : la galette, le cidre, la musique, les gens. Pas d'annuaire sans fin, seulement les lieux où l'on se sent un peu à Quimper ou à Saint-Malo.</p>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <h3>La carte des adresses</h3>
+          <p>Les crêperies et bars bretons autour de vous, avec la distance, les horaires et l'itinéraire.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          <h3>L'agenda fest-noz</h3>
+          <p>Concerts, fest-noz, soirées Saint-Patrick et Saint-Yves : les événements de la semaine, adresse par adresse.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <h3>Des filtres qui parlent breton</h3>
+          <p>Blé noir sans gluten, chouchen, kouign-amann maison, terrasse, match diffusé. Filtrez selon votre envie du moment.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>
+          <h3>Vos favoris</h3>
+          <p>Gardez vos adresses préférées et recevez une alerte quand elles organisent une soirée.</p>
+        </article>
+      </div>
+      <div class="filters" aria-label="Exemples de filtres">
+        <span class="label">Filtres</span>
+        <span class="pill">Galette complète</span>
+        <span class="pill">Cidre brut</span>
+        <span class="pill">Chouchen</span>
+        <span class="pill">Kouign-amann</span>
+        <span class="pill">Musique live</span>
+        <span class="pill">Terrasse</span>
+        <span class="pill">Ouvert le dimanche</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="band top10" id="top-10">
+    <div class="wrap">
+      <div class="band-head">
+        <div>
+          <span class="eyebrow">Classement · novembre 2026</span>
+          <h2>Le Top 10 des crêperies bretonnes de Paris.</h2>
+        </div>
+        <p>Nous avons croisé les notes des clients sur Google et sur TheFork. Chaque adresse doit être bien notée sur les deux plateformes pour entrer dans le classement.</p>
+      </div>
+
+      <ol class="rank-list">
+        <li class="rank rank-head" aria-hidden="true"><span>Rang</span><span>Établissement</span><span>Google</span><span>TheFork</span><span>Score Breizh /10</span></li>
+        <li class="rank"><span class="n">1</span><div><h3>Maison Bretonne</h3><p class="where">5 rue de Rivoli · Paris 4e</p></div><div class="src"><span class="k">Google</span><b>4,7</b>/5<small>443 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,5</b>/10<small>287 avis</small></div><div class="score"><b>9,45</b><span class="bar"><i style="width:94.5%"></i></span></div></li>
+        <li class="rank"><span class="n">2</span><div><h3>Crêperie Le Gall</h3><p class="where">8 rue de Hanovre · Paris 2e</p></div><div class="src"><span class="k">Google</span><b>4,7</b>/5<small>119 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,4</b>/10<small>178 avis</small></div><div class="score"><b>9,40</b><span class="bar"><i style="width:94%"></i></span></div></li>
+        <li class="rank"><span class="n">3</span><div><h3>Crêperie Gisèle</h3><p class="where">65 rue de Rennes · Paris 6e</p></div><div class="src"><span class="k">Google</span><b>4,6</b>/5<small>279 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,5</b>/10<small>188 avis</small></div><div class="score"><b>9,35</b><span class="bar"><i style="width:93.5%"></i></span></div></li>
+        <li class="rank"><span class="n">4</span><div><h3>Crêperie des Canettes</h3><p class="where">10 rue des Canettes · Paris 6e</p></div><div class="src"><span class="k">Google</span><b>4,5</b>/5<small>768 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,5</b>/10<small>449 avis</small></div><div class="score"><b>9,25</b><span class="bar"><i style="width:92.5%"></i></span></div></li>
+        <li class="rank"><span class="n">5</span><div><h3>Crêperie L'Hermine</h3><p class="where">16 rue de la Roquette · Paris 11e</p></div><div class="src"><span class="k">Google</span><b>4,4</b>/5<small>670 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,4</b>/10<small>1 367 avis</small></div><div class="score"><b>9,10</b><span class="bar"><i style="width:91%"></i></span></div></li>
+        <li class="rank"><span class="n">6</span><div><h3>Crêperie Bretonne Fleurie</h3><p class="where">67 rue de Charonne · Paris 11e</p></div><div class="src"><span class="k">Google</span><b>4,4</b>/5<small>618 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,4</b>/10<small>500 avis</small></div><div class="score"><b>9,10</b><span class="bar"><i style="width:91%"></i></span></div></li>
+        <li class="rank"><span class="n">7</span><div><h3>Crêperie Genia Montparnasse</h3><p class="where">98 bd du Montparnasse · Paris 14e</p></div><div class="src"><span class="k">Google</span><b>4,7</b>/5<small>350 avis</small></div><div class="src"><span class="k">TheFork</span><b>8,5</b>/10<small>50 avis</small></div><div class="score"><b>8,95</b><span class="bar"><i style="width:89.5%"></i></span></div></li>
+        <li class="rank"><span class="n">8</span><div><h3>L'Atelier Artisan Crêpier</h3><p class="where">10 rue Mabillon · Paris 6e</p></div><div class="src"><span class="k">Google</span><b>4,5</b>/5<small>2 453 avis</small></div><div class="src"><span class="k">TheFork</span><b>8,8</b>/10<small>3 107 avis</small></div><div class="score"><b>8,90</b><span class="bar"><i style="width:89%"></i></span></div></li>
+        <li class="rank"><span class="n">9</span><div><h3>Crêperie Chez Germain</h3><p class="where">33 rue Saint-André-des-Arts · Paris 6e</p></div><div class="src"><span class="k">Google</span><b>4,3</b>/5<small>646 avis</small></div><div class="src"><span class="k">TheFork</span><b>9,4</b>/10<small>1 602 avis</small></div><div class="score"><b>8,85</b><span class="bar"><i style="width:88.5%"></i></span></div></li>
+        <li class="rank"><span class="n">10</span><div><h3>Crêperie Plougastel</h3><p class="where">47 rue du Montparnasse · Paris 14e</p></div><div class="src"><span class="k">Google</span><b>4,3</b>/5<small>2 165 avis</small></div><div class="src"><span class="k">TheFork</span><b>8,7</b>/10<small>1 063 avis</small></div><div class="score"><b>8,65</b><span class="bar"><i style="width:86.5%"></i></span></div></li>
+      </ol>
+
+      <div class="method">
+        <p><strong>Comment le score est calculé.</strong> La note Google (sur 5) est ramenée sur 10, puis on fait la moyenne avec la note TheFork (sur 10). En cas d'égalité, l'adresse qui a le plus d'avis passe devant. Notes relevées le 12 novembre 2026. Elles évoluent chaque jour.</p>
+        <p><strong>Pourquoi pas les bars ?</strong> Les bars à cidre comme La Cidrerie du Canal ou Breizh Café ne sont pas notés sur TheFork, donc ils ne peuvent pas être comparés de la même façon. Ils auront leur propre classement dans l'appli. Aucun établissement n'a payé pour figurer dans ce Top 10.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band quartier" id="montparnasse">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Le quartier breton</span>
+        <h2>Montparnasse, la porte de la Bretagne.</h2>
+        <p>Depuis l'arrivée du train de Brest à la gare Montparnasse, des générations de Bretons se sont installées autour de la rue du Montparnasse et de la rue d'Odessa. L'appli vous fait découvrir ce quartier, et toutes les adresses bretonnes du reste de Paris.</p>
+      </div>
+      <div class="lex">
+        <div><b>Krampouezh</b><span>[kram-pou-eh]</span><p>Les crêpes, en breton.</p></div>
+        <div><b>Fest-noz</b><span>[fest-nôz]</span><p>Fête de nuit, où l'on danse en chaîne.</p></div>
+        <div><b>Chouchen</b><span>[chou-chenn]</span><p>Hydromel breton, à boire frais.</p></div>
+        <div><b>Yec'hed mat !</b><span>[yé-ret mat]</span><p>« Santé ! », pour trinquer.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band pros" id="pros">
+    <div class="wrap">
+      <div class="band-head">
+        <div>
+          <span class="eyebrow">Pour les établissements</span>
+          <h2>Faites-vous trouver par ceux qui cherchent la Bretagne.</h2>
+        </div>
+        <p>Nos utilisateurs ouvrent l'appli quand ils ont envie d'une crêpe, d'un cidre ou d'une soirée bretonne. Votre fiche apparaît au moment où ils choisissent où aller.</p>
+      </div>
+      <div class="offers">
+        <article class="offer">
+          <h3>Fiche de base</h3>
+          <div class="price">0 €</div>
+          <ul><li>Nom, adresse, horaires</li><li>Présence sur la carte</li><li>Une photo</li></ul>
+        </article>
+        <article class="offer">
+          <h3>Fiche premium</h3>
+          <div class="price">29 € <small>/ mois HT</small></div>
+          <ul><li>Galerie de photos et menu</li><li>Lien de réservation</li><li>Statistiques mensuelles de vues et de clics</li></ul>
+        </article>
+        <article class="offer star">
+          <span class="badge">Le plus demandé</span>
+          <h3>Mise en avant</h3>
+          <div class="price">69 € <small>/ mois HT</small></div>
+          <ul><li>Tout le premium</li><li>En tête des résultats de votre quartier, marqué « Sponsorisé »</li><li>3 places maximum par quartier</li></ul>
+        </article>
+        <article class="offer">
+          <h3>Événement</h3>
+          <div class="price">39 € <small>/ événement HT</small></div>
+          <ul><li>Votre soirée en avant dans l'agenda</li><li>Une bannière la semaine de l'événement</li><li>Option notification aux abonnés</li></ul>
+        </article>
+      </div>
+
+      <div class="pros-foot">
+        <div>
+          <h3>Référencer mon établissement</h3>
+          <p>Laissez-nous vos coordonnées. Nous vous rappelons sous 48 h pour créer votre fiche et vous montrer l'appli.</p>
+          <p class="legal">Sans engagement, résiliable chaque mois. Les emplacements payants sont toujours signalés comme « Sponsorisé » aux utilisateurs.</p>
+        </div>
+        <form id="pro-form" novalidate>
+          <label>Nom de l'établissement<input id="f-nom" name="nom" placeholder="Crêperie Ker Avel" required></label>
+          <label>Type<select id="f-type" name="type"><option>Crêperie</option><option>Bar</option><option>Restaurant</option><option>Autre</option></select></label>
+          <label>Arrondissement<input id="f-arr" name="arr" placeholder="14e"></label>
+          <label>Téléphone<input id="f-tel" name="tel" type="tel" placeholder="01 23 45 67 89"></label>
+          <label class="full">E-mail<input id="f-mail" name="mail" type="email" placeholder="contact@votre-creperie.fr" required></label>
+          <label class="full">Offre qui vous intéresse<select id="f-offre" name="offre"><option>Je ne sais pas encore</option><option>Fiche premium</option><option>Mise en avant</option><option>Événement</option></select></label>
+          <button class="btn" type="submit">Envoyer ma demande</button>
+          <p id="form-msg" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="faq">
+    <div class="wrap">
+      <div class="band-head">
+        <div>
+          <span class="eyebrow">Questions fréquentes</span>
+          <h2>Bon à savoir.</h2>
+        </div>
+      </div>
+      <div class="faq">
+        <details><summary>L'application est-elle gratuite ?</summary><p>Oui, pour tous les utilisateurs. Elle est financée par les établissements qui choisissent une offre de visibilité.</p></details>
+        <details><summary>Comment les adresses sont-elles choisies ?</summary><p>Nous retenons les lieux qui ont une vraie ambiance bretonne : cuisine, boissons, décor, musique ou événements. Le référencement de base est gratuit et ne dépend d'aucun paiement.</p></details>
+        <details><summary>Qu'est-ce qu'une fiche « Sponsorisé » ?</summary><p>C'est un établissement qui paie pour apparaître en tête des résultats. Il est toujours signalé comme tel dans l'appli.</p></details>
+        <details><summary>Je connais une adresse qui manque.</summary><p>Proposez-la depuis l'onglet Profil de l'appli. Nous la vérifions avant de l'ajouter.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="gwenn" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="kenavo">Kenavo ar wech all !</span>
+    <nav aria-label="Liens légaux">
+      <a href="#">Mentions légales</a>
+      <a href="#">Conditions générales de vente</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="#pros">Espace établissements</a>
+    </nav>
+    <span>© 2026 Breizh e Pariz</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('pro-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var nom = document.getElementById('f-nom').value.trim();
+  var mail = document.getElementById('f-mail').value.trim();
+  var msg = document.getElementById('form-msg');
+  if (!nom || !mail || mail.indexOf('@') < 1) {
+    msg.textContent = "Indiquez le nom de l'établissement et une adresse e-mail valide.";
+    return;
+  }
+  msg.textContent = "Merci ! (Formulaire de démonstration : la demande n'est envoyée nulle part pour l'instant.)";
+});
+</script>
+</body>
+</html>
